@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 //import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from '../../../firebaseConfig';
+
 
 export default function RegistrationScreen({ navigation }) {
   const [fullName, setFullName] = useState('')
@@ -14,7 +17,19 @@ export default function RegistrationScreen({ navigation }) {
   }
   
   const onRegisterPress = () => {
-  
+    // createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
+    //   .then((userCredential) => {
+    //     // Signed up 
+    //     const user = userCredential.user;
+    //     // ...
+    //   })
+    //   .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     // ..
+    //   });
+    const apiurl = process.env.EXPO_PUBLIC_APIKEY
+    console.log(apiurl)
   }
   
   return (
