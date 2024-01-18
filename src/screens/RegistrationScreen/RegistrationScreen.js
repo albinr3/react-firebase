@@ -3,7 +3,9 @@ import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 //import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from '../../../firebaseConfig';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../../firebaseConfig';
+import { collection, addDoc, doc, getDoc} from "firebase/firestore"; 
+
 
 
 export default function RegistrationScreen({ navigation }) {
@@ -17,19 +19,33 @@ export default function RegistrationScreen({ navigation }) {
   }
   
   const onRegisterPress = () => {
-    // createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-    //   .then((userCredential) => {
-    //     // Signed up 
-    //     const user = userCredential.user;
-    //     // ...
-    //   })
-    //   .catch((error) => {
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //     // ..
-    //   });
-    const apiurl = process.env.EXPO_PUBLIC_APIKEY
-    console.log(apiurl)
+    console.log(email)
+    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
+      .then((userCredential) => {
+        // Signed up 
+        const uid = userCredential.user.uid;
+        console.log("este es el primer id: ", uid)
+        const dataUser = {
+          id: uid,
+          email,
+          fullName
+        };
+        const addUser = addDoc(collection(FIREBASE_DB, "users"), {
+          dataUser
+        });
+        console.log("Document written with ID: segundo ", addUser);
+        const docRef = doc(FIREBASE_DB, "users");
+        const docSnap = getDoc(docRef);
+        console.log(docSnap);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+      });
+
+      
+    
   }
   
   return (
