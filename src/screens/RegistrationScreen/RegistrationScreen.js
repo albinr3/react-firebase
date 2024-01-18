@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Pressable, Text, TextInput, View } from 'react-native'
 //import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../../firebaseConfig';
-import { collection, addDoc, doc, getDoc} from "firebase/firestore"; 
+import { collection, addDoc, doc, getDocs} from "firebase/firestore"; 
 
 
 
@@ -19,34 +19,43 @@ export default function RegistrationScreen({ navigation }) {
   }
   
   const onRegisterPress = () => {
-    console.log(email)
     createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         // Signed up 
         const uid = userCredential.user.uid;
-        console.log("este es el primer id: ", uid)
         const dataUser = {
           id: uid,
           email,
           fullName
         };
-        const addUser = addDoc(collection(FIREBASE_DB, "users"), {
+        const addUser = await addDoc(collection(FIREBASE_DB, "users"), {
           dataUser
-        });
-        console.log("Document written with ID: segundo ", addUser);
-        const docRef = doc(FIREBASE_DB, "users");
-        const docSnap = getDoc(docRef);
-        console.log(docSnap);
+        }); 
+        navigation.navigate('Home', {user: dataUser})      
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = error.message;
+        console.error("Error al crear usuario", error);
         // ..
       });
-
-      
     
   }
+
+  const onNav = () => {
+    navigation.navigate('Home');
+  }
+  //consultar base de datos
+ // const onConsultPress = async () => {
+    // try {
+    //   const querySnapshot = await getDocs(collection(FIREBASE_DB, "users"));
+  
+    //   querySnapshot.forEach((doc) => {
+    //     console.log(`${doc.id} => ${JSON.stringify(doc.data(), null, 2)}`);
+    //   });
+    // } catch (error) {
+    //   console.error("Error al consultar la base de datos:", error);
+    // }
+  //}
   
   return (
     <View style={styles.container}>
@@ -93,11 +102,16 @@ export default function RegistrationScreen({ navigation }) {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
-        <TouchableOpacity
+        <Pressable
           style={styles.button}
           onPress={() => onRegisterPress()}>
           <Text style={styles.buttonTitle}>Create account</Text>
-        </TouchableOpacity>
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          onPress={() => onNav()}>
+          <Text style={styles.buttonTitle}>navegar</Text>
+        </Pressable>
         <View style={styles.footerView}>
           <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
         </View>

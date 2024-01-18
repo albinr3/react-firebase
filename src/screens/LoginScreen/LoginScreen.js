@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 //import { KeyboardAdwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import styles from './styles'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  
+  if (Platform.OS === 'web') {
+    console.log("holaaa")
+  }
+
   const onFooterLinkPress = () => {
     navigation.navigate('Registration')
   }
