@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Pressable, Text, View, TextInput, FlatList} from 'react-native'
-import { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_DB } from '../../../firebaseConfig';
-import { getAuth, signOut } from "firebase/auth";
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../../firebaseConfig';
+import { signOut } from "firebase/auth";
 import styles from './styles'
 import { collection, setDoc, getDocs, doc, query, where, orderBy, serverTimestamp} from "firebase/firestore"; 
 
@@ -14,13 +14,13 @@ export default function HomeScreen(props) {
   const userID = props.extraData.uid
   const notesCollection = collection(FIREBASE_DB, 'notes');
 
-//here we apply useEffect to get all the notes from the database
-  useEffect( ()=> {
-    const fetchData = async () => {
-      try {
-        const notesCollection = collection(FIREBASE_DB, 'notes');
-        const q = query(notesCollection, where("authorID", "==", userID), orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(q);
+// Applying useEffect to retrieve all the notes from the database
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const notesCollection = collection(FIREBASE_DB, 'notes');
+      const q = query(notesCollection, where("authorID", "==", userID), orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
         console.log('No documents found in the "notes" collection.');
@@ -35,63 +35,67 @@ export default function HomeScreen(props) {
       });
 
       setNotes(newNotes);
-      
+
       console.log('Notes:', newNotes);
     } catch (error) {
       // Handle errors
+      console.error('Error fetching notes:', error);
     }
   };
 
-    fetchData(); // Call the asynchronous function inside useEffect
-  }, []); // Empty dependency array means this effect runs once when the component mounts
+  fetchData(); // Call the asynchronous function inside useEffect
+}, []); // Empty dependency array means this effect runs once when the component mounts
 
-  const onAddButtonPress = async () => {
-    if (noteText && noteText.length > 0) {
-      const timestamp = serverTimestamp()
-      // Puede que necesite proporcionar el id de la nueva nota aquí
-      const newNote = {
-        text: noteText,
-        authorID: userID,
-        createdAt: timestamp,
-      };
+const onAddButtonPress = async () => {
+  if (noteText && noteText.length > 0) {
+    const timestamp = serverTimestamp()
+    // May need to provide the id of the new note here
+    const newNote = {
+      text: noteText,
+      authorID: userID,
+      createdAt: timestamp,
+    };
 
-      try {
-        await setDoc(doc(notesCollection), newNote);
-  
-        // Actualización del estado para incluir la nueva nota
-        setNotes(previousNotes => [
-          // Suponiendo que desea que la nueva nota esté al principio (más reciente)
-          { id: notesCollection.id, ...newNote },
-          ...previousNotes
-        ]);
-  
-      } catch (error) {
-        // Manejar errores aquí
-      }
-  
-      // Limpiar el campo de texto
-      setNoteText('');
+    try {
+      await setDoc(doc(notesCollection), newNote);
+
+      // Update the state to include the new note
+      setNotes(previousNotes => [
+        // Assuming you want the new note to be at the beginning (most recent)
+        { id: notesCollection.id, ...newNote },
+        ...previousNotes
+      ]);
+
+    } catch (error) {
+      // Handle errors here
+      console.error('Error adding new note:', error);
     }
-  }
-  const functionSignOut = ()=> {
-    signOut(FIREBASE_AUTH).then(() => {
-      // Sign-out successful.
-      console.log("sign out sucessfull")
-      navigation.navigate("Login")
-    }).catch((error) => {
-      // An error happened.
-    });
-  }
 
-  const renderEntity = ({item, index}) => {
-    return (
-        <View style={styles.entityContainer}>
-            <Text style={styles.entityText}>
-                {index}. {item.text}
-            </Text>
-        </View>
-    )
+    // Clear the text input field
+    setNoteText('');
   }
+}
+
+const functionSignOut = () => {
+  signOut(FIREBASE_AUTH).then(() => {
+    // Sign-out successful.
+    console.log("Sign out successful");
+    navigation.navigate("Login");
+  }).catch((error) => {
+    // An error happened.
+    console.error('Sign-out error:', error);
+  });
+}
+
+const renderEntity = ({ item, index }) => {
+  return (
+    <View style={styles.entityContainer}>
+      <Text style={styles.entityText}>
+        {index}. {item.text}
+      </Text>
+    </View>
+  )
+}
   
   return (
     <View style={styles.container}>
