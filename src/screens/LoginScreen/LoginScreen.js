@@ -30,6 +30,8 @@ export default function LoginScreen({ navigation }) {
       if (docSnap.exists()) {
         console.log('Document data:', docSnap.data());
         const user = docSnap.data()
+        setEmail("");
+        setPassword("");
         navigation.navigate('Home', {user})
       } else {
         // docSnap.data() will be undefined in this case
