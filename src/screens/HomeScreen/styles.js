@@ -18,9 +18,30 @@ export default StyleSheet.create({
     height: 47,
     borderRadius: 5,
     backgroundColor: '#788eec',
-    width: 80,
+    minWidth: 80,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    
+  },
+  buttonUpdate: {
+    height: 28,
+    borderRadius: 5,
+    backgroundColor: '#00FF00',
+    minWidth: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 7,
+    padding: 5
+  },
+  buttonDelete: {
+    height: 28,
+    borderRadius: 5,
+    backgroundColor: '#dc0000',
+    minWidth: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 7,
+    padding: 5
   },
   buttonText: {
     color: 'white',
@@ -34,7 +55,8 @@ export default StyleSheet.create({
     marginTop: 16,
     borderBottomColor: '#ccc',
     borderBottomWidth: 1,
-    paddingBottom: 16
+    paddingBottom: 16,
+    flexDirection: 'row'
   },
   entityText: {
     fontSize: 20,
